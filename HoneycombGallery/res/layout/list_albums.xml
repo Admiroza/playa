@@ -21,18 +21,5 @@
         android:paddingBottom="15dip"
         android:paddingLeft="10dip"
         android:textStyle="bold"/>
- 
-    <!-- Album Songs count -->
-
-    <TextView
-        android:id="@+id/songs_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:background="#333"
-        android:paddingLeft="3dip"
-        android:paddingRight="3dip"
-        android:textColor="#ffffff"
-        android:textStyle="bold" />
- 
+  
 </RelativeLayout>

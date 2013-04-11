@@ -75,7 +75,7 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
  
     ArrayList<HashMap<String, String>> trackList = new ArrayList<HashMap<String, String>>();
  
-	private static final String URL_TRACKS = "http://api.androidhive.info/songs/album_tracks.php";
+	private static final String URL_TRACKS = "http://www.platinumplaya.co.za/ajax/getTracks";
 
 	 
 	private static final String TAG_ID = "id";
@@ -290,7 +290,7 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
                // if (success == "1") {
                     // products found
                     // Getting Array of Products
-
+               
                     JSONArray category_list = json.getJSONArray("songs");
                     Log.d("Category List JSON Array", category_list.toString() + "");
                     // looping through All Products

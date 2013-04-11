@@ -9,13 +9,10 @@ import org.apache.http.NameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-
-
 import com.example.android.hcgallery.helper.AlertDialogManager;
 import com.example.android.hcgallery.helper.ConnectionDetector;
 import com.example.android.hcgallery.helper.JsonParser;
-
+ 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -74,14 +71,13 @@ public class Home extends Activity {
 
 	ArrayList<HashMap<String, String>> albumsList;
 
-	// albums JSONArray
-	JSONArray albums = null;
+	String album_id;
 	// albums JSON url
 	private static final String URL_ALBUMS = "http://platinumplaya.co.za/ajax/getAlbum";
 
 	private static final String TAG_ID = "id";
-	private static final String TAG_NAME = "name";
-	private static final String TAG_SONGS_COUNT = "songs_count";
+	private static final String TAG_NAME = "title";
+	 
  
 @Override
 protected void onCreate(Bundle savedInstanceState) {
@@ -116,7 +112,7 @@ protected void onCreate(Bundle savedInstanceState) {
 				Intent i = new Intent(getApplicationContext(), MainActivity.class);
 				
 				// send album id to tracklist activity to get list of songs under that album
-				String album_id = ((TextView) view.findViewById(R.id.album_id)).getText().toString();
+				  album_id = ((TextView) view.findViewById(R.id.album_id)).getText().toString();
 				i.putExtra("album_id", album_id);				
 				
 				startActivity(i);
@@ -158,64 +154,50 @@ class LoadAlbums extends AsyncTask<String, String, String> {
 
 		try {		
 			JSONObject jsonObj = new JSONObject(json);
-		    JSONArray albums = jsonObj.getJSONArray("albums");
-			 
-			
-			if (albums != null) {
-				// looping through All albums
-				for (int i = 0; i < albums.length(); i++) {
-					JSONObject c = albums.getJSONObject(i);
+		    //JSONArray albums =  new  JSONArray
+		    
+			// looping through All albums
+			for (int i = 0; i < 2; i++) {
+				//JSONObject c = jsonObj.getJSONObject(i);
+				album_id = jsonObj.getJSONObject("albums").getString("id");
+				String id = jsonObj.getJSONObject("albums").getString("id");
+				String name = jsonObj.getJSONObject("albums").getString("title");
+				 
 
-					String id = c.getString(TAG_ID);
-					String name = c.getString(TAG_NAME);
-					String songs_count = c.getString(TAG_SONGS_COUNT);
+			
+				HashMap<String, String> map = new HashMap<String, String>();
 
 				
-					HashMap<String, String> map = new HashMap<String, String>();
+				map.put(TAG_ID, id);
+				map.put(TAG_NAME, name);
+				 
 
-					
-					map.put(TAG_ID, id);
-					map.put(TAG_NAME, name);
-					map.put(TAG_SONGS_COUNT, songs_count);
-
-					albumsList.add(map);
-				}
-			}else{
-				Log.d("Albums: ", "null");
+				albumsList.add(map);
 			}
 
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
-		return null;
+		return json;
 	}
 
-	/**
-	 * After completing background task Dismiss the progress dialog
-	 * **/
 	protected void onPostExecute(String file_url) {
-		// dismiss the dialog after getting all albums
 		pDialog.dismiss();
-
-		// updating UI from Background Thread
 		runOnUiThread(new Runnable() {
 			public void run() {
-				/**
-				 * Updating parsed JSON data into ListView
-				 * */
-				  m_listview = (ListView) findViewById(R.id.list);
+				 
+				m_listview = (ListView) findViewById(R.id.list);
 				ListAdapter adapter = new SimpleAdapter(
 						Home.this, albumsList,
 						R.layout.list_albums, new String[] { TAG_ID,
-								TAG_NAME }, new int[] {
-								R.id.album_id, R.id.album_name });
+								TAG_NAME, }, new int[] {
+								R.id.album_id, R.id.album_name, });
 				
-				// updating listview
+				 
 				 m_listview.setAdapter(adapter);
 			}
 		});
-
 	}
 
 }
