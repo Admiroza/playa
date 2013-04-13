@@ -1,18 +1,4 @@
-/*
- * Copyright (C) 2011 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+ 
 
 package com.example.android.hcgallery;
 
@@ -64,7 +50,7 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
     private int mCategory = 0;
     private int mCurPosition = 0;
     private boolean mDualFragments = false;
-	
+    private  String jsonS;
 	ConnectionDetector cd;
 	AlertDialogManager alert = new AlertDialogManager();
 	private ProgressDialog pDialog;
@@ -130,7 +116,7 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
         if (savedInstanceState != null) {
             mCategory = savedInstanceState.getInt("category");
             mCurPosition = savedInstanceState.getInt("listPosition");
-            bar.selectTab(bar.getTabAt(mCategory));
+           
         }
 
        // populateTitles(mCategory);
@@ -203,6 +189,7 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
         super.onSaveInstanceState(outState);
         outState.putInt("listPosition", mCurPosition);
         outState.putInt("category", mCategory);
+     
     }
 
      
@@ -258,30 +245,18 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
     
     class loadTracks extends AsyncTask<String, String, String> {
 
-        
-
-		/**
-         * Before starting background thread Show Progress Dialog
-         * */
+ 
         @Override
         protected void onPreExecute() {
              super.onPreExecute();
-             pDialog = new ProgressDialog(getActivity());
-             Log.d("Activity Context", getActivity().getApplicationContext().toString() + "");
-             pDialog.setMessage("Loading tracks. Please wait...");
-             pDialog.setIndeterminate(false);
-             pDialog.setCancelable(false);
-             pDialog.show();
+             
         }
-
-        /**
-         * Getting product details in background thread
-         * */
+ 
         protected String doInBackground(String... param) {
          
         List<NameValuePair> params = new ArrayList<NameValuePair>();     			
         params.add(new BasicNameValuePair(TAG_ID, album_id));
-        String jsonS = jsonParser.makeHttpRequest(URL_TRACKS, "GET", params);
+          jsonS = jsonParser.makeHttpRequest(URL_TRACKS, "GET", params);
          
             Log.d("All tracks: ", jsonS);
              
@@ -316,7 +291,7 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
                         {
                         	trackList.add(map);
                         }
-                        Log.d("Category List", trackList.toString() + " ");
+                      
                     }} }
              //   }  
             } catch (JSONException e) {
@@ -329,7 +304,7 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
        
         @Override
         protected void onPostExecute(String result) {
-            pDialog.dismiss();
+          
             ListAdapter adapter = new SimpleAdapter(
 					getActivity(), trackList,
 					R.layout.list_tracks, new String[] { TAG_ID,

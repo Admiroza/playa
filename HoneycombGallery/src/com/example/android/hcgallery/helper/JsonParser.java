@@ -45,7 +45,9 @@ public class JsonParser {
 				// defaultHttpClient
 				DefaultHttpClient httpClient = new DefaultHttpClient();
 				HttpPost httpPost = new HttpPost(url);
+				
 				httpPost.setEntity(new UrlEncodedFormEntity(params));
+				httpPost.setHeader("Content-type", "application/json");
 
 				HttpResponse httpResponse = httpClient.execute(httpPost);
 				HttpEntity httpEntity = httpResponse.getEntity();
@@ -57,7 +59,7 @@ public class JsonParser {
 				String paramString = URLEncodedUtils.format(params, "utf-8");
 				url += "?" + paramString;
 				HttpGet httpGet = new HttpGet(url);
-
+				httpGet.setHeader("Content-type", "application/json");
 				HttpResponse httpResponse = httpClient.execute(httpGet);
 				HttpEntity httpEntity = httpResponse.getEntity();
 				is = httpEntity.getContent();

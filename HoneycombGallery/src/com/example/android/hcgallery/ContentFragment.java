@@ -76,7 +76,7 @@ public class ContentFragment extends Fragment {
                 // to the updateContentAndRecycleBitmap() method itself
                 mCategory = savedInstanceState.getInt("category");
                 mCurPosition = savedInstanceState.getInt("listPosition");
-              
+              title = savedInstanceState.getString("title");
 				updateContent(mCategory, mCurPosition,title);
             }
         }
@@ -111,6 +111,7 @@ public class ContentFragment extends Fragment {
         super.onSaveInstanceState(outState);
         outState.putInt("listPosition", mCurPosition);
         outState.putInt("category", mCategory);
+        outState.putString("title", title);
         outState.putBoolean("systemUiVisible", mSystemUiVisible);
     }
 
@@ -146,7 +147,8 @@ public class ContentFragment extends Fragment {
     }
  
 
-    void updateContent(int category, int position,String title) {
+    void updateContent(int category, int position,String titl) {
+    	title = titl;
         mCategory = category;
         mCurPosition = position;
         TextView txt_album_name = (TextView) getView().findViewById(R.id.album_name);

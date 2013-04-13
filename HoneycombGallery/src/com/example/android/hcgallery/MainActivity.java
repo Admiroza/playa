@@ -96,7 +96,7 @@ public class MainActivity extends Activity implements TitlesFragment.OnItemSelec
          
         final FragmentManager fm = getFragmentManager();
         final TitlesFragment f = (TitlesFragment) fm
-                .findFragmentById(R.id.titles_frag);
+                .findFragmentById(R.id.info_frag);
         final View titlesView = f.getView();
  
         final boolean isPortrait = getResources().getConfiguration().orientation ==
