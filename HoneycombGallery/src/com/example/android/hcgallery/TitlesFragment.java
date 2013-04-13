@@ -18,6 +18,7 @@ package com.example.android.hcgallery;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -68,24 +69,24 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
 	AlertDialogManager alert = new AlertDialogManager();
 	private ProgressDialog pDialog;
 	JsonParser jsonParser = new JsonParser();
-	JSONArray albums = null;
+	 
 	String[] values ;
-	String album_id, album_name;
+	String album_id, album_name,title;
 	String json;
  
     ArrayList<HashMap<String, String>> trackList = new ArrayList<HashMap<String, String>>();
  
-	private static final String URL_TRACKS = "http://www.platinumplaya.co.za/ajax/getTracks";
+	private static final String URL_TRACKS = "http://api.androidhive.info/songs/album_tracks.php";
 
 	 
 	private static final String TAG_ID = "id";
 	private static final String TAG_TITLE = "name";
-	private static final String TAG_ALBUM = "album";
+	private static final String TAG_ALBUM = "album_id";
 	private static final String TAG_DURATION = "duration";
 	 
 	 
     public interface OnItemSelectedListener {
-        public void onItemSelected(int category, int position);
+        public void onItemSelected(int category, int position,String title);
     }
 
     @Override
@@ -104,8 +105,8 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Intent i = getActivity().getIntent();
-       album_id = i.getStringExtra("album_id");
-       
+     //  album_id = i.getStringExtra("album_id");
+       album_id = "5";
         new loadTracks().execute();
     
         ContentFragment frag = (ContentFragment) getFragmentManager()
@@ -119,11 +120,11 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
         // Must call in order to get callback to onCreateOptionsMenu()
         setHasOptionsMenu(true);
 
-        Directory.initializeDirectory();
-        for (int ji = 0; ji < Directory.getCategoryCount(); ji++) {
-            bar.addTab(bar.newTab().setText(Directory.getCategory(ji).getName())
-                    .setTabListener(this));
-        }
+       // Directory.initializeDirectory();
+        // for (int ji = 0; ji < Directory.getCategoryCount(); ji++) {
+        //     bar.addTab(bar.newTab().setText(Directory.getCategory(ji).getName())
+        //             .setTabListener(this));
+        //  }
 
         //Current position should survive screen rotations.
         if (savedInstanceState != null) {
@@ -165,21 +166,24 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
 
     /** Attaches an adapter to the fragment's ListView to populate it with items */
     public void populateTitles(int category) {
-        DirectoryCategory cat = Directory.getCategory(category);
-        String[] items = new String[cat.getEntryCount()];
-        for (int i = 0; i < cat.getEntryCount(); i++)
-            items[i] = cat.getEntry(i).getName();
+      //  DirectoryCategory cat = Directory.getCategory(category);
+      //  String[] items = new String[cat.getEntryCount()];
+      //  for (int i = 0; i < cat.getEntryCount(); i++)
+     //       items[i] = cat.getEntry(i).getName();
         // Convenience method to attach an adapter to ListFragment's ListView
-        setListAdapter(new ArrayAdapter<String>(getActivity(),
-                R.layout.title_list_item, items));
-        mCategory = category;
+     //   setListAdapter(new ArrayAdapter<String>(getActivity(),
+              //  R.layout.title_list_item, items));
+      //  mCategory = category;
     }
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
-        // Send the event to the host activity via OnItemSelectedListener callback
-        mListener.onItemSelected(mCategory, position);
+    	TextView txt_song_name = (TextView) getView().findViewById(R.id.song_title);
+    	 
+    	title = ((TextView) v.findViewById(R.id.album_name)).getText().toString();
+        mListener.onItemSelected(mCategory, position,title);
         mCurPosition = position;
+        
     }
 
     /** Called to select an item from the listview */
@@ -191,7 +195,7 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
         }
         // Calls the parent activity's implementation of the OnItemSelectedListener
         // so the activity can pass the event to the sibling fragment as appropriate
-        mListener.onItemSelected(mCategory, position);
+        mListener.onItemSelected(mCategory, position,title);
     }
 
     @Override
@@ -264,7 +268,7 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
              super.onPreExecute();
              pDialog = new ProgressDialog(getActivity());
              Log.d("Activity Context", getActivity().getApplicationContext().toString() + "");
-             pDialog.setMessage("Loading Categories. Please wait...");
+             pDialog.setMessage("Loading tracks. Please wait...");
              pDialog.setIndeterminate(false);
              pDialog.setCancelable(false);
              pDialog.show();
@@ -278,50 +282,43 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
         List<NameValuePair> params = new ArrayList<NameValuePair>();     			
         params.add(new BasicNameValuePair(TAG_ID, album_id));
         String jsonS = jsonParser.makeHttpRequest(URL_TRACKS, "GET", params);
-
-            // Check your log cat for JSON reponse
+         
             Log.d("All tracks: ", jsonS);
-            int num = 1;
-            try {
-                // Checking for SUCCESS TAG
              
-                JSONObject json = new JSONObject(jsonS);
-                //String success = json.getString("success");
-               // if (success == "1") {
-                    // products found
-                    // Getting Array of Products
+            try {
                
-                    JSONArray category_list = json.getJSONArray("songs");
-                    Log.d("Category List JSON Array", category_list.toString() + "");
-                    // looping through All Products
-                    for (int j = 1; j < category_list.length(); j++) {
-                        JSONObject c = category_list.getJSONObject(j);
+             
+            	JSONObject jObj = new JSONObject(jsonS);
+				if (jObj != null) {
+					String album_id = jObj.getString(TAG_ID);
+					 
+					JSONArray albums = jObj.getJSONArray("songs");
 
-                     // Storing each json item in variable
-						String song_id = c.getString(TAG_ID);
+					if (albums != null) {
+						// looping through All songs
+						for (int i = 0; i < albums.length(); i++) {
+							JSONObject c = albums.getJSONObject(i);
+
+							// Storing each json item in variable
+							String song_id = c.getString(TAG_ID);
+							 
+							String name = c.getString(TAG_TITLE);
+							 
+							HashMap<String, String> map = new HashMap<String, String>();
+ 
+							 
+							map.put(TAG_ID, song_id);
 						 
-						String name = c.getString(TAG_TITLE);
-						String duration = c.getString(TAG_DURATION);
-
-                        // creating new HashMap
-                        HashMap<String, String> map = new HashMap<String, String>();
-
-                     // adding each child node to HashMap key => value
-						map.put("album_id", album_id);
-						map.put(TAG_ID, song_id);
-						 
-						map.put(TAG_TITLE, name);
-						map.put(TAG_DURATION, duration);
-  
-                        num = num + 1;
-                        // adding HashList to ArrayList
+							map.put(TAG_TITLE, name);
+							 
+                    
                         if(trackList.contains(map) != true)
                         {
                         	trackList.add(map);
                         }
                         Log.d("Category List", trackList.toString() + " ");
-                    }
-             //   } 
+                    }} }
+             //   }  
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -329,19 +326,15 @@ public class TitlesFragment extends ListFragment implements ActionBar.TabListene
             return null;
         }
 
-        /**
-         * After completing background task Dismiss the progress dialog
-         * **/
+       
         @Override
         protected void onPostExecute(String result) {
             pDialog.dismiss();
-
-
             ListAdapter adapter = new SimpleAdapter(
 					getActivity(), trackList,
-					R.layout.list_tracks, new String[] { "album_id", TAG_ID, "track_no",
-							TAG_TITLE, TAG_DURATION }, new int[] {
-							R.id.album_id, R.id.song_id, R.id.track_no, R.id.album_name, R.id.song_duration });
+					R.layout.list_tracks, new String[] { TAG_ID,
+							TAG_TITLE,}, new int[] {
+							R.id.album_id, R.id.album_name});
 			// updating listview
 			setListAdapter(adapter);
         }

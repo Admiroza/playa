@@ -22,8 +22,9 @@ public class ContentActivity extends Activity {
         // Take the info from the intent and deliver it to the fragment so it can update
         int category = extras.getInt("category");
         int position = extras.getInt("position");
+        String title = extras.getString("title");
         ContentFragment frag = (ContentFragment) getFragmentManager().findFragmentById(R.id.content_frag);
-        frag.updateContent(category, position);
+        frag.updateContent(category, position,title);
       }
   }
 

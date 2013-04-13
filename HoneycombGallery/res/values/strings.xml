@@ -28,4 +28,7 @@
     <string name="basic_notification">Show a basic notification</string>
     <string name="custom_notification">Show a custom notification</string>
     <string name="switch_camera">Switch camera</string>
+    <string name="play_str">Play</string>
+	<string name="buy_str">Buy</string>
+	<string name="pause_str">Pause</string>
 </resources>

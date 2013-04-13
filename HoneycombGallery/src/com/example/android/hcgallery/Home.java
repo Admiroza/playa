@@ -153,8 +153,7 @@ class LoadAlbums extends AsyncTask<String, String, String> {
 		Log.d("Albums JSON: ", "> " + json);
 
 		try {		
-			JSONObject jsonObj = new JSONObject(json);
-		    //JSONArray albums =  new  JSONArray
+			JSONObject jsonObj = new JSONObject(json);  
 		    
 			// looping through All albums
 			for (int i = 0; i < 2; i++) {

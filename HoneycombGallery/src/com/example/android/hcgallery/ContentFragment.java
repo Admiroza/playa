@@ -3,46 +3,35 @@ package com.example.android.hcgallery;
 
 import android.app.ActionBar;
 import android.app.Fragment;
-import android.content.ClipData;
-import android.content.ClipData.Item;
-import android.content.ClipDescription;
+ 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.AsyncTask;
+ 
 import android.os.Bundle;
+import android.text.Html;
 import android.view.ActionMode;
-import android.view.DragEvent;
+ 
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
+ 
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.Toast;
+ 
+import android.widget.TextView;
+  
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.StringTokenizer;
-
-
+ 
 public class ContentFragment extends Fragment {
-    private View mContentView;
+     
     private int mCategory = 0;
     private int mCurPosition = 0;
     private boolean mSystemUiVisible = true;
     private boolean mSoloFragment = false;
-
-    // The bitmap currently used by ImageView
-    private Bitmap mBitmap = null;
-
+ 
+    private String title;
     // Current action mode (contextual action bar, a.k.a. CAB)
     private ActionMode mCurrentActionMode;
 
@@ -52,47 +41,11 @@ public class ContentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        mContentView = inflater.inflate(R.layout.content_welcome, null);
-        final ImageView imageView = (ImageView) mContentView.findViewById(R.id.image);
-        mContentView.setDrawingCacheEnabled(false);
+      
 
-        // Handle drag events when a list item is dragged into the view
-        mContentView.setOnDragListener(new View.OnDragListener() {
-            public boolean onDrag(View view, DragEvent event) {
-                switch (event.getAction()) {
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        view.setBackgroundColor(
-                                getResources().getColor(R.color.drag_active_color));
-                        break;
-
-                    case DragEvent.ACTION_DRAG_EXITED:
-                        view.setBackgroundColor(Color.TRANSPARENT);
-                        break;
+		View view = inflater.inflate(R.layout.content_welcome, container, false);
+		return view;
  
-                }
-                return false;
-            }
-        });
-
-        // Show/hide the system status bar when single-clicking a photo.
-        mContentView.setOnClickListener(new OnClickListener() {
-            public void onClick(View view) {
-                if (mCurrentActionMode != null) {
-                  // If we're in an action mode, don't toggle the action bar
-                  return;
-                }
-
-                if (mSystemUiVisible) {
-                  setSystemUiVisible(false);
-                } else {
-                  setSystemUiVisible(true);
-                }
-            }
-        });
-
-     
-
-        return mContentView;
     }
 
     /** This is where we perform additional setup for the fragment that's either
@@ -123,17 +76,21 @@ public class ContentFragment extends Fragment {
                 // to the updateContentAndRecycleBitmap() method itself
                 mCategory = savedInstanceState.getInt("category");
                 mCurPosition = savedInstanceState.getInt("listPosition");
-                updateContent(mCategory, mCurPosition);
+              
+				updateContent(mCategory, mCurPosition,title);
             }
         }
 
         if (mSoloFragment) {
-          String title = Directory.getCategory(mCategory).getEntry(mCurPosition).getName();
+        
           ActionBar bar = getActivity().getActionBar();
           bar.setTitle(title);
         }
     }
-
+    public void setText(String item) {
+		TextView view = (TextView) getView().findViewById(R.id.album_name);
+		view.setText(item);
+	}
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // This callback is used only when mSoloFragment == true (see onActivityCreated above)
@@ -189,10 +146,11 @@ public class ContentFragment extends Fragment {
     }
  
 
-    void updateContent(int category, int position) {
+    void updateContent(int category, int position,String title) {
         mCategory = category;
         mCurPosition = position;
-
+        TextView txt_album_name = (TextView) getView().findViewById(R.id.album_name);
+        txt_album_name.setText(Html.fromHtml("<b>Album:</b> " + title));
         if (mCurrentActionMode != null) {
             mCurrentActionMode.finish();
         }     

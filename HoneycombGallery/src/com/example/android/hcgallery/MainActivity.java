@@ -181,22 +181,23 @@ public class MainActivity extends Activity implements TitlesFragment.OnItemSelec
     }
 
  
-    public void onItemSelected(int category, int position) {
+    public void onItemSelected(int category, int position,String title) {
+
       if (!mDualFragments) {
            
           Intent intent = new Intent(this, ContentActivity.class);
           intent.putExtra("category", category);
           intent.putExtra("position", position);
-          intent.putExtra("album_id", album_id);
+          intent.putExtra("title", title);
           startActivity(intent);
       } else {
           
           ContentFragment frag = (ContentFragment) getFragmentManager()
                   .findFragmentById(R.id.content_frag);
-          frag.updateContent(category, position);
+          frag.updateContent(category, position,title);
       }
     }
-
+ 
 
     
 }
